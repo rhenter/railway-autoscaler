@@ -1,0 +1,22 @@
+{
+  "policy": {
+    "min_replicas": 1,
+    "max_replicas": 3,
+    "lower_threshold": 0.3,
+    "upper_threshold": 0.8,
+    "cooldown_seconds": 60
+  },
+  "initial_replicas": 1,
+  "samples": [
+    {"at_seconds": 0, "utilization": 0.9},
+    {"at_seconds": 30, "utilization": 0.95},
+    {"at_seconds": 60, "utilization": 0.85},
+    {"at_seconds": 120, "utilization": 0.95},
+    {"at_seconds": 180, "utilization": 0.5},
+    {"at_seconds": 240, "utilization": null},
+    {"at_seconds": 300, "utilization": 0.2},
+    {"at_seconds": 330, "utilization": 0.1},
+    {"at_seconds": 360, "utilization": 0.1},
+    {"at_seconds": 420, "utilization": 0.1}
+  ]
+}

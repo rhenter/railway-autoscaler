@@ -1,0 +1,484 @@
+{
+  "checked_on": "2026-10-27",
+  "endpoint": "https://backboard.railway.com/graphql/v2",
+  "method": "Unauthenticated read-only GraphQL introspection; no resource reads or mutations.",
+  "data": {
+    "query": {
+      "fields": [
+        {
+          "name": "metrics",
+          "description": "Get metrics for a project, environment, and service",
+          "isDeprecated": false,
+          "deprecationReason": null,
+          "args": [
+            {
+              "name": "averagingWindowSeconds",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "name": "endDate",
+              "type": {
+                "kind": "SCALAR",
+                "name": "DateTime",
+                "ofType": null
+              }
+            },
+            {
+              "name": "environmentId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "name": "groupBy",
+              "type": {
+                "kind": "LIST",
+                "name": null,
+                "ofType": {
+                  "kind": "NON_NULL",
+                  "name": null,
+                  "ofType": {
+                    "kind": "ENUM",
+                    "name": "MetricTag"
+                  }
+                }
+              }
+            },
+            {
+              "name": "includeDeleted",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            },
+            {
+              "name": "measurements",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "LIST",
+                  "name": null,
+                  "ofType": {
+                    "kind": "NON_NULL",
+                    "name": null
+                  }
+                }
+              }
+            },
+            {
+              "name": "projectId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "name": "sampleRateSeconds",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Int",
+                "ofType": null
+              }
+            },
+            {
+              "name": "serviceId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "name": "startDate",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "DateTime",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "name": "volumeId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "name": "volumeInstanceExternalId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "name": "workspaceId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            }
+          ],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "LIST",
+              "name": null
+            }
+          }
+        },
+        {
+          "name": "serviceInstance",
+          "description": "Get a service instance belonging to a service and environment",
+          "isDeprecated": false,
+          "deprecationReason": null,
+          "args": [
+            {
+              "name": "environmentId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "name": "serviceId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "OBJECT",
+              "name": "ServiceInstance"
+            }
+          }
+        }
+      ]
+    },
+    "mutation": {
+      "fields": [
+        {
+          "name": "environmentPatchCommit",
+          "description": "Commit the provided patch to the environment.",
+          "isDeprecated": false,
+          "deprecationReason": null,
+          "args": [
+            {
+              "name": "commitMessage",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "name": "environmentId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "name": "patch",
+              "type": {
+                "kind": "SCALAR",
+                "name": "EnvironmentConfig",
+                "ofType": null
+              }
+            },
+            {
+              "name": "skipDeploys",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            }
+          ],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "SCALAR",
+              "name": "String"
+            }
+          }
+        },
+        {
+          "name": "environmentPatchCommitStaged",
+          "description": "Commits the staged changes for a single environment.",
+          "isDeprecated": false,
+          "deprecationReason": null,
+          "args": [
+            {
+              "name": "commitMessage",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "name": "environmentId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "name": "skipDeploys",
+              "type": {
+                "kind": "SCALAR",
+                "name": "Boolean",
+                "ofType": null
+              }
+            }
+          ],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "SCALAR",
+              "name": "String"
+            }
+          }
+        },
+        {
+          "name": "environmentPatchRestage",
+          "description": "Copy a FAILED patch's changes into the environment's staged patch (creating one if needed). The FAILED patch is left untouched.",
+          "isDeprecated": false,
+          "deprecationReason": null,
+          "args": [
+            {
+              "name": "patchId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "OBJECT",
+              "name": "EnvironmentPatch"
+            }
+          }
+        },
+        {
+          "name": "serviceInstanceUpdate",
+          "description": "Update a service instance",
+          "isDeprecated": false,
+          "deprecationReason": null,
+          "args": [
+            {
+              "name": "environmentId",
+              "type": {
+                "kind": "SCALAR",
+                "name": "String",
+                "ofType": null
+              }
+            },
+            {
+              "name": "input",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "INPUT_OBJECT",
+                  "name": "ServiceInstanceUpdateInput",
+                  "ofType": null
+                }
+              }
+            },
+            {
+              "name": "serviceId",
+              "type": {
+                "kind": "NON_NULL",
+                "name": null,
+                "ofType": {
+                  "kind": "SCALAR",
+                  "name": "String",
+                  "ofType": null
+                }
+              }
+            }
+          ],
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "SCALAR",
+              "name": "Boolean"
+            }
+          }
+        }
+      ]
+    },
+    "instance": {
+      "fields": [
+        {
+          "name": "numReplicas",
+          "description": null,
+          "isDeprecated": false,
+          "deprecationReason": null,
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int",
+            "ofType": null
+          }
+        },
+        {
+          "name": "region",
+          "description": null,
+          "isDeprecated": false,
+          "deprecationReason": null,
+          "type": {
+            "kind": "SCALAR",
+            "name": "String",
+            "ofType": null
+          }
+        }
+      ]
+    },
+    "updateInput": {
+      "inputFields": [
+        {
+          "name": "multiRegionConfig",
+          "description": null,
+          "type": {
+            "kind": "SCALAR",
+            "name": "JSON",
+            "ofType": null
+          }
+        },
+        {
+          "name": "numReplicas",
+          "description": null,
+          "type": {
+            "kind": "SCALAR",
+            "name": "Int",
+            "ofType": null
+          }
+        },
+        {
+          "name": "region",
+          "description": null,
+          "type": {
+            "kind": "SCALAR",
+            "name": "String",
+            "ofType": null
+          }
+        }
+      ]
+    },
+    "measurements": {
+      "enumValues": [
+        {
+          "name": "CPU_LIMIT",
+          "description": null
+        },
+        {
+          "name": "CPU_USAGE",
+          "description": null
+        },
+        {
+          "name": "CPU_USAGE_2",
+          "description": null
+        },
+        {
+          "name": "MEMORY_LIMIT_GB",
+          "description": null
+        },
+        {
+          "name": "MEMORY_USAGE_GB",
+          "description": null
+        },
+        {
+          "name": "NETWORK_RX_GB",
+          "description": null
+        },
+        {
+          "name": "NETWORK_TX_GB",
+          "description": null
+        }
+      ]
+    },
+    "metric": {
+      "fields": [
+        {
+          "name": "ts",
+          "description": "The timestamp of the sample. Represented has number of seconds since the Unix epoch.",
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "SCALAR",
+              "name": "Int",
+              "ofType": null
+            }
+          }
+        },
+        {
+          "name": "value",
+          "description": "The value of the sample.",
+          "type": {
+            "kind": "NON_NULL",
+            "name": null,
+            "ofType": {
+              "kind": "SCALAR",
+              "name": "Float",
+              "ofType": null
+            }
+          }
+        }
+      ]
+    }
+  }
+}
