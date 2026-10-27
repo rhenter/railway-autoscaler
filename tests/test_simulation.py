@@ -20,7 +20,9 @@ def test_example_replay_matches_reviewable_expected_output(capsys):
 
 
 def test_holds_do_not_extend_cooldown():
-    result = simulate(Policy(), 1, [Sample(0, 0.9), Sample(30, None), Sample(60, 0.9)])
+    result = simulate(
+        Policy(max_replicas=5), 1, [Sample(0, 0.9), Sample(30, None), Sample(60, 0.9)]
+    )
 
     assert [row["desired_replicas"] for row in result] == [2, 2, 3]
 
@@ -28,22 +30,24 @@ def test_holds_do_not_extend_cooldown():
 def test_each_replay_starts_with_fresh_state():
     samples = [Sample(0, 0.9), Sample(60, 0.1)]
 
-    assert simulate(Policy(), 1, samples) == simulate(Policy(), 1, samples)
+    assert simulate(Policy(max_replicas=5), 1, samples) == simulate(
+        Policy(max_replicas=5), 1, samples
+    )
 
 
 @pytest.mark.parametrize("times", [[10, 5], [10, 10]])
 def test_unordered_or_duplicate_timestamps_are_rejected(times):
     with pytest.raises(ValueError, match="strictly increasing"):
-        simulate(Policy(), 1, [Sample(time, 0.5) for time in times])
+        simulate(Policy(max_replicas=5), 1, [Sample(time, 0.5) for time in times])
 
 
 def test_empty_input_returns_no_decisions():
-    assert simulate(Policy(), 1, []) == []
+    assert simulate(Policy(max_replicas=5), 1, []) == []
 
 
 def test_invalid_initial_count_is_rejected_even_without_samples():
     with pytest.raises(ValueError):
-        simulate(Policy(), 6, [])
+        simulate(Policy(max_replicas=5), 6, [])
 
 
 @pytest.mark.parametrize("document", ["{", "[]", "null", '{"policy": {}}'])

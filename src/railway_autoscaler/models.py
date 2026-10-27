@@ -17,7 +17,7 @@ def replica_count(name: str, value: int) -> None:
 @dataclass(frozen=True)
 class Policy:
     min_replicas: int = 1
-    max_replicas: int = 5
+    max_replicas: int = 1
     lower_threshold: float = 0.3
     upper_threshold: float = 0.8
     cooldown_seconds: float = 60

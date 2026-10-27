@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "railway-autoscaler"
 version = "0.1.0"
-description = "Local policy simulator and starting point for a Railway horizontal autoscaler"
+description = "Django Railway autoscaler scaffold with environment limits and an offline policy simulator"
 readme = "README.md"
 requires-python = ">=3.14,<3.15"
 license = "MIT"

@@ -2,12 +2,17 @@
 
 ## Project description
 
-railway-autoscaler is an independent Python 3.14 starting repository for a real
-horizontal autoscaling problem on Railway. The baseline includes a deterministic
-local policy simulator, typed metric/API interfaces, pytest coverage, a uv project
-and lockfile, synthetic examples, and dated API capability evidence. The actual
-network adapters and operational reconciliation controller remain deliberately
-unimplemented for the Taiga Code Behaviors task.
+railway-autoscaler is an independent, MIT-licensed Python 3.14 starting repository
+for a Django autoscaler on Railway. The target design uses Celery workers, a single
+Celery Beat scheduler, and the host Django PostgreSQL database for status, ownership
+and scaling history. That stored data can later power a read-only status dashboard.
+
+The baseline implements validated environment replica limits (minimum=1 and
+maximum=1 by default), a deterministic local policy simulator, metric/API Protocols,
+pytest coverage, a uv project/lockfile, credential-free examples and dated API
+capability evidence. Django integration, database models, Celery tasks, scheduling
+and Railway adapters remain the substantial Taiga Code Behaviors task. The dashboard
+is a separate follow-up rather than part of the initial controller implementation.
 
 ## Reproduce baseline checks
 
@@ -24,33 +29,45 @@ uv run --locked railway-autoscaler simulate examples/scenario.json > actual.json
 uv run --locked python -c 'import json,pathlib; assert json.loads(pathlib.Path("actual.json").read_text()) == json.loads(pathlib.Path("examples/expected-output.json").read_text())'
 ```
 
-`actual.json` is a disposable verification file. Checks require no Railway account
-or credentials. Dependency installation may download Python and packages; tests
-and simulation themselves run offline. The optional schema check is documented
-separately and intentionally uses the network.
+`actual.json` is disposable. These checks require no Django server, broker, database,
+Railway account or credentials. Dependency installation downloads public packages;
+tests and simulation themselves run offline. Optional live schema introspection
+uses the network and is documented separately in `RAILWAY_API.md`.
+
+## Verify environment limits
+
+```sh
+uv run --locked python -c 'from railway_autoscaler.config import load_policy; p = load_policy({}); assert (p.min_replicas, p.max_replicas) == (1, 1)'
+RAILWAY_AUTOSCALER_MIN_REPLICAS=1 RAILWAY_AUTOSCALER_MAX_REPLICAS=4 uv run --locked python -c 'from railway_autoscaler.config import load_policy; print(load_policy())'
+```
+
+The helper reads the environment, not `.env` files automatically. The JSON simulator
+uses its explicit scenario bounds instead; ambient settings do not alter replay.
+The Django example contains a **planned** Beat entry referencing a task that does
+not exist yet. Do not enable that schedule before implementing the task.
 
 ## Baseline versus pending work
 
 | Included and working | Left for the evaluation |
 | --- | --- |
-| Single-sample thresholds, hysteresis, replica bounds | Sustained CPU/memory windows and metric normalization |
-| In-memory cooldown and deterministic replay | Durable state, distributed lease and restart recovery |
-| MetricsProvider and RailwayAPI Protocols | Railway metrics/configuration/mutation adapters |
-| Offline CLI and example results | Dry-run/apply reconciliation command |
-| Baseline tests and live schema excerpt | Failure, concurrency and integration tests |
+| Environment limits, defaulting to one; Django settings snippet | Installable Django app and integration wiring |
+| Single-sample thresholds, hysteresis and bounds | Sustained CPU/memory decisions and normalization |
+| In-memory cooldown and deterministic replay | Database status, ownership, history and restart recovery |
+| MetricsProvider and RailwayAPI Protocols | Railway adapters and safe reconciliation |
+| Planned Beat configuration example | Registered Celery task, Beat schedule and worker smoke tests |
+| Offline tests and API evidence | PostgreSQL concurrency, broker and opt-in live tests |
 
-The pending task and acceptance criteria are in
-[IMPLEMENTATION_TASK.md](IMPLEMENTATION_TASK.md). They describe product engineering
-work, not agent configuration. No agent instructions, skills, or agent workflows
-are included in this repository.
+See [IMPLEMENTATION_TASK.md](IMPLEMENTATION_TASK.md) for the main task,
+[DJANGO_DESIGN.md](DJANGO_DESIGN.md) for architecture and configuration, and
+[DASHBOARD_TASK.md](DASHBOARD_TASK.md) for the later read-only dashboard.
 
 ## Packaging boundary
 
-The delivered ZIP contains source, documentation, examples, tests, license and
-lockfile. It excludes `.git`, virtual environments, installed dependencies, caches,
-credentials, private application code and editor files. The lockfile records
-public package resolution metadata; it does not contain vendored dependencies.
+All filenames, descriptions, documentation and tasks are in English. The ZIP
+contains source, docs, tests, examples, license and lockfile. It excludes `.git`,
+virtual environments, installed dependencies, caches, credentials, private code and
+editor files. No AGENTS.md, skills or agent workflows are shipped. The lockfile
+contains public dependency metadata, not vendored packages.
 
-An MIT license allows public reuse. No Taiga platform policy or evaluation outcome
-is asserted: the referenced conversation did not expose the attached assessment
-images. Follow the assessment's own submission requirements in its interface.
+No Taiga policy or evaluation outcome is asserted. Follow the assessment's own
+submission requirements in its interface.

@@ -18,7 +18,7 @@ from railway_autoscaler.policy import evaluate
     ],
 )
 def test_single_sample_decisions(utilization, current, desired, reason):
-    decision = evaluate(Policy(), Sample(100, utilization), current)
+    decision = evaluate(Policy(max_replicas=5), Sample(100, utilization), current)
 
     assert decision.current_replicas == current
     assert decision.desired_replicas == desired
@@ -27,20 +27,22 @@ def test_single_sample_decisions(utilization, current, desired, reason):
 
 @pytest.mark.parametrize("utilization", [0.1, 0.9])
 def test_cooldown_blocks_both_directions(utilization):
-    decision = evaluate(Policy(), Sample(59, utilization), 2, last_scaled_at=0)
+    decision = evaluate(Policy(max_replicas=5), Sample(59, utilization), 2, last_scaled_at=0)
 
     assert decision.desired_replicas == 2
     assert decision.reason == "cooldown"
 
 
 def test_change_allowed_at_exact_cooldown_boundary():
-    decision = evaluate(Policy(), Sample(60, 0.9), 2, last_scaled_at=0)
+    decision = evaluate(Policy(max_replicas=5), Sample(60, 0.9), 2, last_scaled_at=0)
 
     assert decision.desired_replicas == 3
 
 
 def test_zero_cooldown_allows_immediate_change():
-    decision = evaluate(Policy(cooldown_seconds=0), Sample(0, 0.9), 2, last_scaled_at=0)
+    decision = evaluate(
+        Policy(max_replicas=5, cooldown_seconds=0), Sample(0, 0.9), 2, last_scaled_at=0
+    )
 
     assert decision.desired_replicas == 3
 
@@ -48,13 +50,13 @@ def test_zero_cooldown_allows_immediate_change():
 @pytest.mark.parametrize("current", [0, -1, 6, True, 1.5])
 def test_invalid_observed_replica_count_is_rejected(current):
     with pytest.raises(ValueError):
-        evaluate(Policy(), Sample(0, 0.9), current)
+        evaluate(Policy(max_replicas=5), Sample(0, 0.9), current)
 
 
 @pytest.mark.parametrize("last_scaled_at", [-1, 101, float("nan"), True])
 def test_invalid_last_change_is_rejected(last_scaled_at):
     with pytest.raises(ValueError):
-        evaluate(Policy(), Sample(100, 0.9), 2, last_scaled_at)
+        evaluate(Policy(max_replicas=5), Sample(100, 0.9), 2, last_scaled_at)
 
 
 @pytest.mark.parametrize(
