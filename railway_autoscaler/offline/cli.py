@@ -4,8 +4,8 @@ import argparse
 import json
 from pathlib import Path
 
-from railway_autoscaler.models import Policy, Sample
-from railway_autoscaler.simulation import simulate
+from railway_autoscaler.core.policy_types import Policy, Sample
+from railway_autoscaler.core.simulation import simulate
 
 
 def main(argv: list[str] | None = None) -> int:

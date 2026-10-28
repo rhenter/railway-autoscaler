@@ -21,6 +21,8 @@ class Policy:
     lower_threshold: float = 0.3
     upper_threshold: float = 0.8
     cooldown_seconds: float = 60
+    high_samples: int = 1
+    low_samples: int = 1
 
     def __post_init__(self) -> None:
         replica_count("min_replicas", self.min_replicas)
@@ -34,6 +36,8 @@ class Policy:
         finite_number("cooldown_seconds", self.cooldown_seconds)
         if self.cooldown_seconds < 0:
             raise ValueError("cooldown_seconds must be nonnegative")
+        replica_count("high_samples", self.high_samples)
+        replica_count("low_samples", self.low_samples)
 
 
 @dataclass(frozen=True)

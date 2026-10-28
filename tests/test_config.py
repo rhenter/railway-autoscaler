@@ -3,9 +3,9 @@ from pathlib import Path
 
 import pytest
 
-from railway_autoscaler.config import load_policy
-from railway_autoscaler.models import Policy, Sample
-from railway_autoscaler.policy import evaluate
+from railway_autoscaler.core.policy import evaluate
+from railway_autoscaler.core.policy_types import Policy, Sample
+from railway_autoscaler.offline.config import load_policy
 
 MINIMUM = "RAILWAY_AUTOSCALER_MIN_REPLICAS"
 MAXIMUM = "RAILWAY_AUTOSCALER_MAX_REPLICAS"

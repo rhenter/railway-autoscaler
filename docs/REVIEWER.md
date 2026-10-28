@@ -37,14 +37,15 @@ uses the network and is documented separately in `RAILWAY_API.md`.
 ## Verify environment limits
 
 ```sh
-uv run --locked python -c 'from railway_autoscaler.config import load_policy; p = load_policy({}); assert (p.min_replicas, p.max_replicas) == (1, 1)'
-RAILWAY_AUTOSCALER_MIN_REPLICAS=1 RAILWAY_AUTOSCALER_MAX_REPLICAS=4 uv run --locked python -c 'from railway_autoscaler.config import load_policy; print(load_policy())'
+uv run --locked python -c 'from railway_autoscaler.offline.config import load_policy; p = load_policy({}); assert (p.min_replicas, p.max_replicas) == (1, 1)'
+RAILWAY_AUTOSCALER_MIN_REPLICAS=1 RAILWAY_AUTOSCALER_MAX_REPLICAS=4 uv run --locked python -c 'from railway_autoscaler.offline.config import load_policy; print(load_policy())'
 ```
 
 The helper reads the environment, not `.env` files automatically. The JSON simulator
 uses its explicit scenario bounds instead; ambient settings do not alter replay.
-The Django example contains a **planned** Beat entry referencing a task that does
-not exist yet. Do not enable that schedule before implementing the task.
+The Django example contains the registered Beat entry and safe dry-run defaults.
+The task and adapters are validated with local fakes; no real Railway mutation is
+part of the default test suite.
 
 ## Baseline versus pending work
 
@@ -52,10 +53,10 @@ not exist yet. Do not enable that schedule before implementing the task.
 | --- | --- |
 | Environment limits, defaulting to one; Django settings snippet | Installable Django app and integration wiring |
 | Single-sample thresholds, hysteresis and bounds | Sustained CPU/memory decisions and normalization |
-| In-memory cooldown and deterministic replay | Database status, ownership, history and restart recovery |
-| MetricsProvider and RailwayAPI Protocols | Railway adapters and safe reconciliation |
-| Planned Beat configuration example | Registered Celery task, Beat schedule and worker smoke tests |
-| Offline tests and API evidence | PostgreSQL concurrency, broker and opt-in live tests |
+| In-memory cooldown and deterministic replay | PostgreSQL-specific lock/concurrency and broker smoke tests |
+| MetricsProvider, Railway client fakes and safe reconciliation | Railway isolated-service smoke test |
+| Registered Celery task and Beat configuration example | Isolated worker/Beat/broker smoke test |
+| Offline, Django/SQLite and adapter tests | PostgreSQL concurrency and opt-in live tests |
 
 See [IMPLEMENTATION_TASK.md](IMPLEMENTATION_TASK.md) for the main task,
 [DJANGO_DESIGN.md](DJANGO_DESIGN.md) for architecture and configuration, and

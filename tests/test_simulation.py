@@ -3,9 +3,9 @@ from pathlib import Path
 
 import pytest
 
-from railway_autoscaler.cli import main
-from railway_autoscaler.models import Policy, Sample
-from railway_autoscaler.simulation import simulate
+from railway_autoscaler.core.policy_types import Policy, Sample
+from railway_autoscaler.core.simulation import simulate
+from railway_autoscaler.offline.cli import main
 
 EXAMPLES = Path(__file__).resolve().parents[1] / "examples"
 

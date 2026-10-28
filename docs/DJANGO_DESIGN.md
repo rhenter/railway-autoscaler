@@ -1,6 +1,7 @@
 # Django integration design
 
-Status: **design only**, except for the tested environment configuration helper.
+Status: **implemented locally with fakes**, except for PostgreSQL concurrency,
+worker/broker smoke testing and isolated-service validation.
 
 ## Responsibilities
 
@@ -23,7 +24,7 @@ worker or from Django application initialization.
 In Django settings, use the working configuration helper:
 
 ```python
-from railway_autoscaler.config import load_policy
+from railway_autoscaler.offline.config import load_policy
 
 RAILWAY_AUTOSCALER_POLICY = load_policy()
 ```
@@ -32,16 +33,17 @@ RAILWAY_AUTOSCALER_POLICY = load_policy()
 the environment, both defaulting to one. Raising the maximum is explicit. Changing
 worker environment configuration requires a worker restart/reload; stored snapshots
 do not override active limits. CPU/memory thresholds and task/runtime settings are
-part of the pending integration, not features of the current environment helper.
+configured explicitly by the host. The reconciliation lease defaults to 120 seconds;
+metric freshness can be bounded with `RAILWAY_AUTOSCALER_METRIC_MAX_AGE_SECONDS`.
 
 The simulator reads its policy from JSON to keep replay deterministic. Its example
 maximum of three is separate from the default configuration.
 
 ## Planned task registration and scheduling
 
-[django_settings.py](../examples/django_settings.py) contains a planned Beat entry.
-The task is deliberately absent from the scaffold. The pending implementation
-must register it in the reusable app and document host application discovery.
+[django_settings.py](../examples/django_settings.py) contains the Beat entry.
+The reusable app registers the shared task through normal Celery autodiscovery;
+the host still owns the Celery application and must include the Django app.
 
 With a host Celery app configured using `namespace="CELERY"`, the schedule belongs
 in `CELERY_BEAT_SCHEDULE`. Merge it with the host's existing schedule rather than
@@ -67,6 +69,13 @@ row and append-only operation events. Persist intent before network access; reco
 success only after confirmation. Preserve ambiguous outcomes for the next cycle.
 Separate short database transactions from Railway network calls, and document crash
 recovery and ownership expiry. Database failure must pause mutations.
+
+The current status row persists `lease_owner`, `lease_expires_at` and
+`state_version`. A cycle may recover only an expired lease. Before and after a
+Railway call it locks and verifies the owner; an expired or replaced owner fails
+closed, and conditional lease release prevents an old worker from clearing a new
+owner's lease. `pending_replicas` is intent, not confirmation: it remains set
+until a later read observes the requested count.
 
 This data can support a read-only Django admin view first, then a dashboard using
 small periodic JSON refreshes. Show the sample time and last successful collection.

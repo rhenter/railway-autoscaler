@@ -3,10 +3,10 @@
 Open source starting point for a **Django** Railway horizontal autoscaler using
 **Celery workers, Celery Beat, and database-backed status/history**.
 
-This Python 3.14 release is a scaffold: environment configuration and the offline
-policy simulator work today. The reusable Django app, Celery task, database models
-and Railway integrations remain the substantial implementation task for Taiga
-Code Behaviors. See [IMPLEMENTATION_TASK.md](docs/IMPLEMENTATION_TASK.md).
+This Python 3.14 release provides the reusable Django app, encrypted Railway
+credentials, autoscaling targets and policies, database-backed status/history,
+the Railway resource client, and a Celery reconciliation task. The task defaults
+to dry-run. See [CELERY.md](docs/CELERY.md) for host-project wiring.
 
 ## Configuration
 
@@ -14,7 +14,7 @@ The future Django app will expose its policy through `settings.py`, backed by
 environment variables. Replica bounds already load with the helper below:
 
 ```python
-from railway_autoscaler.config import load_policy
+from railway_autoscaler.offline.config import load_policy
 
 RAILWAY_AUTOSCALER_POLICY = load_policy()
 ```
@@ -53,20 +53,21 @@ truth for autoscaling state and history; the Celery result backend is separate.
 The controller does not run in HTTP workers or start from Django application
 initialization.
 
-The future Django models record observed/desired counts, pending operations,
-cooldown, sample counters and scaling events. Use PostgreSQL transactions and
-explicit ownership to handle overlapping tasks and redelivery. Exactly one Beat
-scheduler owns this schedule. Redis is optional as a broker/cache, not a second
-authoritative state store. A Celery result backend does not replace these models.
+The Django models record observed/desired counts, pending operations, cooldown,
+sample counters, leases and scaling events. Reconciliation uses PostgreSQL
+transactions and explicit ownership to handle overlapping tasks and redelivery.
+Exactly one Beat scheduler owns this schedule. Redis is optional as a broker/cache,
+not a second authoritative state store. A Celery result backend does not replace
+these models.
 
 Persisted status enables a future read-only dashboard showing capacity, decisions,
 metrics and event history. Start with periodic refresh and display collection
 timestamps so data freshness is clear. See [DASHBOARD_TASK.md](docs/DASHBOARD_TASK.md).
 
-The [Django settings example](examples/django_settings.py) includes a **planned**
-Beat entry. The referenced task does not exist yet; do not enable the entry until
-the pending implementation is complete. Django, Celery and Redis are not runtime
-dependencies of the current offline scaffold.
+The [Django settings example](examples/django_settings.py) includes the Beat entry
+and the safe dry-run defaults. The default offline simulator still requires no
+Railway account, broker or credentials; Django and Celery are needed only for the
+integrated task.
 
 ## Run the scaffold locally
 
@@ -110,13 +111,13 @@ operations are not implemented. No production readiness or load capacity is clai
 ## Structure
 
 ```text
-src/railway_autoscaler/
-  config.py       # validated environment limits, both defaulting to one
-  models.py       # policy, samples and decisions
-  policy.py       # pure single-sample decision function
-  simulation.py   # deterministic in-memory replay
-  cli.py          # simulate command only
-  ports.py        # metric and Railway API contracts
+railway_autoscaler/
+  autoscaling/   # provider contracts and reconciliation service
+  core/           # pure policy types, decisions and simulation
+  offline/        # simulator CLI and environment configuration
+  models.py       # Django models for the autoscaler application
+  client/          # Railway and broker clients
+  services.py      # encrypted credential service
 examples/         # synthetic replay and planned Django/Beat settings
 tests/           # configuration, policy, replay and CLI validation
 docs/            # API evidence, pending implementation task and reviewer guide

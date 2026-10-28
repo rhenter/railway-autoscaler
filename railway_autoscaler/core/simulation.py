@@ -3,8 +3,8 @@
 from collections.abc import Iterable
 from dataclasses import asdict
 
-from railway_autoscaler.models import Policy, Sample, replica_count
-from railway_autoscaler.policy import evaluate
+from .policy import evaluate
+from .policy_types import Policy, Sample, replica_count
 
 
 def simulate(policy: Policy, initial_replicas: int, samples: Iterable[Sample]) -> list[dict]:

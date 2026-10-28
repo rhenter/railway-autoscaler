@@ -1,7 +1,7 @@
 import pytest
 
-from railway_autoscaler.models import Policy, Sample
-from railway_autoscaler.policy import evaluate
+from railway_autoscaler.core.policy import evaluate
+from railway_autoscaler.core.policy_types import Policy, Sample
 
 
 @pytest.mark.parametrize(

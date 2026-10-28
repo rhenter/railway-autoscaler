@@ -3,7 +3,7 @@
 import os
 from collections.abc import Mapping
 
-from railway_autoscaler.models import Policy
+from railway_autoscaler.core.policy_types import Policy
 
 
 def load_policy(environ: Mapping[str, str] | None = None) -> Policy:

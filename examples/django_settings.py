@@ -1,15 +1,16 @@
-"""Snippet for an existing Django settings module.
+"""Snippet for an existing Django settings module."""
 
-Policy loading works today. The Celery task below is planned, NOT implemented.
-Do not enable this Beat entry until the pending controller and task exist.
-Merge the entry into the host project's existing CELERY_BEAT_SCHEDULE.
-"""
-
-from railway_autoscaler.config import load_policy
+from railway_autoscaler.offline.config import load_policy
 
 RAILWAY_AUTOSCALER_POLICY = load_policy()
+RAILWAY_AUTOSCALER_DRY_RUN = True
+RAILWAY_AUTOSCALER_API_TIMEOUT = 20
+RAILWAY_AUTOSCALER_METRIC_WINDOW_SECONDS = 60
+RAILWAY_AUTOSCALER_LEASE_SECONDS = 120
+RAILWAY_AUTOSCALER_METRIC_MAX_AGE_SECONDS = 300
 
-# Planned configuration for a Celery app configured with namespace="CELERY".
+CELERY_TASK_ROUTES = {"railway_autoscaler.reconcile": {"queue": "autoscaling"}}
+
 CELERY_BEAT_SCHEDULE = {
     "evaluate-railway-autoscaling": {
         "task": "railway_autoscaler.reconcile",
